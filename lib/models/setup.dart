@@ -1,4 +1,4 @@
-import 'package:flutter/foundation.dart';
+import '../utils/utils.dart';
 
 class AppModel {
   List<Workout> _workouts = [];
@@ -13,16 +13,28 @@ class AppModel {
       "Workout 1",
       [
         Tabata(
-          [
+          exercises: [
             "Pushups",
             "Situps",
           ],
-          const Duration(seconds: 20),
-          const Duration(seconds: 10),
-        )
+          exerciseDuration: const Duration(seconds: 20),
+          exerciseRestDuration: const Duration(seconds: 10),
+          sets: 4,
+        ),
+        Tabata(
+          exercises: [
+            "Pullups",
+            "Crunches",
+          ],
+          exerciseDuration: const Duration(seconds: 20),
+          exerciseRestDuration: const Duration(seconds: 10),
+          sets: 4,
+        ),
       ],
       const Duration(seconds: 10),
     ));
+
+    print(_workouts.first.tabatas.first.totalTime);
   }
 
   void addWorkout(Workout workout) => _workouts.add(workout);
@@ -36,12 +48,27 @@ class Workout {
   Duration tabataRestDuration;
 
   Workout([this.name, this.tabatas, this.tabataRestDuration]);
+
+  Duration get totalTime {
+    final tabataDurations = tabatas.map((Tabata t) => t.totalTime).toList();
+    final allDurations = tabataDurations.joinDurations(tabataRestDuration);
+    return allDurations.sumDurations();
+  }
 }
 
 class Tabata {
   final List<String> exercises;
   final Duration exerciseDuration;
   final Duration exerciseRestDuration;
+  final int sets;
 
-  Tabata([this.exercises, this.exerciseDuration, this.exerciseRestDuration]);
+  Tabata({this.exercises, this.exerciseDuration, this.exerciseRestDuration, this.sets});
+
+  Duration get totalTime {
+    final totalSets = sets * exercises.length;
+    final exerciseDurations = List<Duration>.filled(totalSets, exerciseDuration);
+    final allDurations = exerciseDurations.joinDurations(exerciseRestDuration);
+
+    return allDurations.sumDurations();
+  }
 }

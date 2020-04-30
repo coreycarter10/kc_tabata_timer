@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../models/setup.dart';
+import '../utils/utils.dart';
 import 'edit_workout_page.dart';
 
 class WorkoutsPage extends StatefulWidget {
@@ -33,7 +34,10 @@ class _WorkoutsPageState extends State<WorkoutsPage> {
 
             return Card(
               child: ListTile(
-                leading: const Icon(Icons.timer),
+                leading: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[Text(workout.totalTime.format()),],
+                ),
                 title: Text(workout.name),
                 subtitle: Text('${workout.tabatas.length} tabatas'),
                 trailing: IconButton(
