@@ -12,7 +12,7 @@ class _AddExerciseDialogState extends State<AddExerciseDialog> {
   Widget build(BuildContext context) {
     return SimpleDialog(
       contentPadding: const EdgeInsets.all(8),
-      title: Text('New Exercise'),
+      title: Text('Exercise'),
       children: <Widget>[
         TextField(
           controller: _textEditingController,
@@ -20,14 +20,15 @@ class _AddExerciseDialogState extends State<AddExerciseDialog> {
         ),
         const SizedBox(height: 12,),
         Row(
+          mainAxisAlignment: MainAxisAlignment.end,
           children: <Widget>[
             SimpleDialogOption(
               onPressed: () => Navigator.pop(context),
-              child: const Text('Add'),
+              child: const Text('CANCEL'),
             ),
             SimpleDialogOption(
               onPressed: () => Navigator.pop(context, _textEditingController.text),
-              child: const Text('Cancel'),
+              child: const Text('OK'),
             ),
           ],
         ),

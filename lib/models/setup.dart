@@ -10,44 +10,37 @@ class AppModel {
   AppModel() {
     // mock data
     addWorkout(Workout(
-      "Workout 1",
+      "Example Workout",
       [
         Tabata(
           exercises: [
             "Pushups",
             "Situps",
           ],
-          exerciseDuration: const Duration(seconds: 20),
-          exerciseRestDuration: const Duration(seconds: 10),
-          sets: 4,
         ),
         Tabata(
           exercises: [
             "Pullups",
             "Crunches",
           ],
-          exerciseDuration: const Duration(seconds: 20),
-          exerciseRestDuration: const Duration(seconds: 10),
-          sets: 4,
         ),
       ],
-      const Duration(seconds: 10),
     ));
-
-    print(_workouts.first.tabatas.first.totalTime);
   }
 
   void addWorkout(Workout workout) => _workouts.add(workout);
-
   void clearCurrentWorkout() => currentWorkout = null;
+  void clearCurrentTabata() => currentTabata = null;
 }
 
 class Workout {
+  static const defaultRest = Duration(minutes: 2);
+
   String name;
   List<Tabata> tabatas;
   Duration tabataRestDuration;
 
-  Workout([this.name, this.tabatas, this.tabataRestDuration]);
+  Workout([this.name = '', this.tabatas, this.tabataRestDuration = defaultRest]);
 
   Duration get totalTime {
     final tabataDurations = tabatas.map((Tabata t) => t.totalTime).toList();
@@ -57,12 +50,21 @@ class Workout {
 }
 
 class Tabata {
-  final List<String> exercises;
-  final Duration exerciseDuration;
-  final Duration exerciseRestDuration;
-  final int sets;
+  static const defaultExercise = Duration(seconds: 30);
+  static const defaultRest = Duration(seconds: 10);
+  static const defaultSets = 2;
 
-  Tabata({this.exercises, this.exerciseDuration, this.exerciseRestDuration, this.sets});
+  List<String> exercises;
+  Duration exerciseDuration;
+  Duration exerciseRestDuration;
+  int sets;
+
+  Tabata({this.exercises, this.exerciseDuration = defaultExercise, this.exerciseRestDuration = defaultRest, this.sets = defaultSets}) {
+    exercises = exercises ?? [];
+  }
+
+  void add(String exercise) => exercises.add(exercise);
+  void remove(String exercise) => exercises.remove(exercise);
 
   Duration get totalTime {
     final totalSets = sets * exercises.length;

@@ -25,33 +25,31 @@ class _WorkoutsPageState extends State<WorkoutsPage> {
       appBar: AppBar(
         title: Text("${widget.title} -- Workouts"),
       ),
-      body: Center(
-        child: ListView.builder(
-          padding: const EdgeInsets.all(8),
-          itemCount: model.workouts.length,
-          itemBuilder: (BuildContext context, int i) {
-            final workout = model.workouts[i];
+      body: ListView.builder(
+        padding: const EdgeInsets.all(8),
+        itemCount: model.workouts.length,
+        itemBuilder: (BuildContext context, int i) {
+          final workout = model.workouts[i];
 
-            return Card(
-              child: ListTile(
-                leading: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[Text(workout.totalTime.format()),],
-                ),
-                title: Text(workout.name),
-                subtitle: Text('${workout.tabatas.length} tabatas'),
-                trailing: IconButton(
-                  icon: const Icon(Icons.edit),
-                  onPressed: () {
-                    model.currentWorkout = workout;
-                    Navigator.pushNamed(context, EditWorkoutPage.route);
-                  },
-                ),
-                onTap: () {},
+          return Card(
+            child: ListTile(
+              leading: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[Text(workout.totalTime.format()),],
               ),
-            );
-          },
-        ),
+              title: Text(workout.name),
+              subtitle: Text('Tabatas: ${workout.tabatas.length}  Rest: ${workout.tabataRestDuration.format()}'),
+              trailing: IconButton(
+                icon: const Icon(Icons.edit),
+                onPressed: () {
+                  model.currentWorkout = workout;
+                  Navigator.pushNamed(context, EditWorkoutPage.route);
+                },
+              ),
+              onTap: () {},
+            ),
+          );
+        },
       ),
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.add),

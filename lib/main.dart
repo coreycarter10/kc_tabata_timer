@@ -20,7 +20,7 @@ class MyApp extends StatelessWidget {
         theme: ThemeData.dark(),
         routes: {
           WorkoutsPage.route: (_) => WorkoutsPage(title: appTitle),
-          EditWorkoutPage.route: (_) => EditWorkoutPage(title: appTitle),
+          EditWorkoutPage.route: (_) => EditWorkoutPage(),
           EditTabataPage.route: (_) => EditTabataPage(),
         },
       ),
