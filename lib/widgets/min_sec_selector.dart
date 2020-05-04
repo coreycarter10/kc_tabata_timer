@@ -11,42 +11,45 @@ class MinSecSelector extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: <Widget>[
-        FlatButton(
-          child: Text(duration.minutes.toString()),
-          onPressed: () {
-            showMaterialNumberPicker(
-              context: context,
-              title: "Minutes",
-              minNumber: 0,
-              maxNumber: 60,
-              selectedNumber: duration.minutes,
-              onChanged: (int value) {
-                onChanged(duration.copyWith(minutes: value));
-              },
-            );
-          },
-        ),
-        const Text(':'),
-        FlatButton(
-          child: Text(duration.seconds.toString()),
-          onPressed: () {
-            showMaterialNumberPicker(
-              context: context,
-              title: "Seconds",
-              minNumber: 0,
-              maxNumber: 59,
-              selectedNumber: duration.seconds,
-              onChanged: (int value) {
-                onChanged(duration.copyWith(seconds: value));
-              },
-            );
-          },
-        ),
+    return ButtonTheme(
+      minWidth: 50,
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          FlatButton(
+            child: Text(duration.minutes.toString().padLeft(2, '0')),
+            onPressed: () {
+              showMaterialNumberPicker(
+                context: context,
+                title: "Minutes",
+                minNumber: 0,
+                maxNumber: 60,
+                selectedNumber: duration.minutes,
+                onChanged: (int value) {
+                  onChanged(duration.copyWith(minutes: value));
+                },
+              );
+            },
+          ),
+          const Text(':'),
+          FlatButton(
+            child: Text(duration.seconds.toString().padLeft(2, '0')),
+            onPressed: () {
+              showMaterialNumberPicker(
+                context: context,
+                title: "Seconds",
+                minNumber: 0,
+                maxNumber: 59,
+                selectedNumber: duration.seconds,
+                onChanged: (int value) {
+                  onChanged(duration.copyWith(seconds: value));
+                },
+              );
+            },
+          ),
 
-      ],
+        ],
+      ),
     );
   }
 }

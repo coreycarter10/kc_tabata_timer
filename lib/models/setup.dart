@@ -29,6 +29,7 @@ class AppModel {
   }
 
   void addWorkout(Workout workout) => _workouts.add(workout);
+  void removeWorkout(Workout workout) => _workouts.remove(workout);
   void clearCurrentWorkout() => currentWorkout = null;
   void clearCurrentTabata() => currentTabata = null;
 }
@@ -40,7 +41,12 @@ class Workout {
   List<Tabata> tabatas;
   Duration tabataRestDuration;
 
-  Workout([this.name = '', this.tabatas, this.tabataRestDuration = defaultRest]);
+  Workout([this.name = 'Untitled Workout', this.tabatas, this.tabataRestDuration = defaultRest]) {
+    tabatas = tabatas ?? [];
+  }
+
+  void add(Tabata tabata) => tabatas.add(tabata);
+  void remove(Tabata tabata) => tabatas.remove(tabata);
 
   Duration get totalTime {
     final tabataDurations = tabatas.map((Tabata t) => t.totalTime).toList();

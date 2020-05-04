@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_material_pickers/flutter_material_pickers.dart';
@@ -5,6 +7,7 @@ import 'package:flutter_material_pickers/flutter_material_pickers.dart';
 import '../models/setup.dart';
 import '../dialogs/add_exercise_dialog.dart';
 import '../widgets/min_sec_selector.dart';
+import '../widgets/list_header.dart';
 
 class EditTabataPage extends StatefulWidget {
   static const route = '/edittabata';
@@ -16,26 +19,30 @@ class EditTabataPage extends StatefulWidget {
 }
 
 class _EditTabataPageState extends State<EditTabataPage> {
-  Tabata _tabata;
-
-  @override
-  void initState() {
-    super.initState();
-  }
+  Tabata tabata;
 
   @override
   Widget build(BuildContext context) {
     final model = Provider.of<AppModel>(context);
 
-    _tabata = model.currentTabata ?? Tabata();
+    // when adding a new tabata...
+    if (model.currentTabata == null) {
+      model.currentTabata = Tabata();
+      model.currentWorkout.add(model.currentTabata);
+      scheduleMicrotask(() => _onEditExercise(model.currentTabata));
+    }
+
+    final workout = model.currentWorkout;
+    final tabata = model.currentTabata;
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Edit Tabata"),
+        title: Text("Add/Edit Exercises -- ${workout.name}"),
       ),
       body: Padding(
         padding: const EdgeInsets.all(8),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -45,10 +52,10 @@ class _EditTabataPageState extends State<EditTabataPage> {
                   children: <Widget>[
                     Text("Exercise:"),
                     MinSecSelector(
-                      duration: _tabata.exerciseDuration,
+                      duration: tabata.exerciseDuration,
                       onChanged: (Duration value) {
                         setState(() {
-                          _tabata.exerciseDuration = value;
+                          tabata.exerciseDuration = value;
                         });
                       },
                     ),
@@ -59,10 +66,10 @@ class _EditTabataPageState extends State<EditTabataPage> {
                   children: <Widget>[
                     Text("Rest:"),
                     MinSecSelector(
-                      duration: _tabata.exerciseRestDuration,
+                      duration: tabata.exerciseRestDuration,
                       onChanged: (Duration value) {
                         setState(() {
-                          _tabata.exerciseRestDuration = value;
+                          tabata.exerciseRestDuration = value;
                         });
                       },
                     ),
@@ -73,17 +80,17 @@ class _EditTabataPageState extends State<EditTabataPage> {
                   children: <Widget>[
                     Text("Sets:"),
                     FlatButton(
-                      child: Text(_tabata.sets.toString()),
+                      child: Text(tabata.sets.toString()),
                       onPressed: () {
                         showMaterialNumberPicker(
                           context: context,
                           title: "Sets",
                           minNumber: 1,
                           maxNumber: 10,
-                          selectedNumber: _tabata.sets,
+                          selectedNumber: tabata.sets,
                           onChanged: (int value) {
                             setState(() {
-                              _tabata.sets = value;
+                              tabata.sets = value;
                             });
                           },
                         );
@@ -93,12 +100,13 @@ class _EditTabataPageState extends State<EditTabataPage> {
                 ),
               ],
             ),
+            const SizedBox(height: 18,),
+            ListHeader(text: "Exercises",),
             Expanded(
               child: ListView.builder(
-                padding: const EdgeInsets.all(8),
-                itemCount: _tabata.exercises.length,
+                itemCount: tabata.exercises.length,
                 itemBuilder: (BuildContext context, int i) {
-                  final exercise = _tabata.exercises[i];
+                  final exercise = tabata.exercises[i];
 
                   return Card(
                     child: ListTile(
@@ -109,27 +117,18 @@ class _EditTabataPageState extends State<EditTabataPage> {
                         children: <Widget>[
                           IconButton(
                             icon: const Icon(Icons.edit),
-                            onPressed: () async {
-                              final value = await _showAddExerciseDialog();
-
-                              if (value != null) {
-                                setState(() {
-                                  _tabata.exercises[i] = value;
-                                });
-                              }
-                            },
+                            onPressed: () => _onEditExercise(tabata, i),
                           ),
                           IconButton(
                             icon: const Icon(Icons.delete_forever),
-                            onPressed: () {
+                            onPressed: tabata.exercises.length > 1 ? () {
                               setState(() {
-                                _tabata.remove(exercise);
+                                tabata.remove(exercise);
                               });
-                            },
+                            } : null,
                           ),
                         ],
                       ),
-                      onTap: () {},
                     ),
                   );
                 },
@@ -145,7 +144,7 @@ class _EditTabataPageState extends State<EditTabataPage> {
 
           if (value != null) {
             setState(() {
-              _tabata.add(value);
+              tabata.add(value);
             });
           }
         },
@@ -153,11 +152,21 @@ class _EditTabataPageState extends State<EditTabataPage> {
     );
   }
 
-  Future<String> _showAddExerciseDialog() async {
+  void _onEditExercise(Tabata tabata, [int i = 0]) async {
+    final value = await _showAddExerciseDialog(tabata.exercises[i]);
+
+    if (value != null) {
+      setState(() {
+        tabata.exercises[i] = value;
+      });
+    }
+  }
+
+  Future<String> _showAddExerciseDialog([String exercise]) async {
     return await showDialog<String>(
       context: context,
       builder: (BuildContext context) {
-        return AddExerciseDialog();
+        return AddExerciseDialog(exercise: exercise,);
       }
     );
   }

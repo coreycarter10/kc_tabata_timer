@@ -1,3 +1,7 @@
+import 'package:flutter/material.dart';
+
+const zeroDuration = Duration(seconds: 0);
+
 extension ListUtils on List<Duration> {
   List<Duration> joinDurations(Duration separator) {
     final Iterator<Duration> iterator = this.iterator;
@@ -16,7 +20,7 @@ extension ListUtils on List<Duration> {
     return result;
   }
 
-  Duration sumDurations() => this.reduce((Duration t, Duration v) => t + v);
+  Duration sumDurations() => this.fold(zeroDuration, (Duration t, Duration v) => t + v);
 }
 
 const secondsInHour = 3600;
@@ -46,5 +50,11 @@ extension DurationUtils on Duration {
       minutes: minutes ?? this.minutes,
       seconds: seconds ?? this.seconds,
     );
+  }
+}
+
+extension TextEditingControllerUtils on TextEditingController {
+  void selectAll() {
+    this.selection = TextSelection(baseOffset: 0, extentOffset: this.text.length);
   }
 }
